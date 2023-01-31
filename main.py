@@ -30,11 +30,13 @@ resources = {
     "coffee": 100,
     "money": 100
 }
+QUARTERS = .25
+DIMES = .10
+NICKLES = .05
+PENNIES = .01
 
 
 # 1. Prompt user by asking “What would you like? (espresso/latte/cappuccino):”
-
-
 def order_drink():
     selection = input("What would you like?\n1 - Espresso\n2 - Latte\n3 - Cappuccino)"
                       "\nUse 1, 2, or 3 for the selection: ")
@@ -71,11 +73,9 @@ def print_report():
     return
 
 def check_resources_availability(drink_to_check):
-    print ("selected: " + drink_to_check)
     # espresso check
     if drink_to_check == '1':
         print("Checking espresso resources.")
-        print (MENU['espresso'])
         if int(resources['water']) < int(MENU['espresso']['ingredients']['water']):
             print("Sorry there is not enough water.")
             return 0
@@ -88,7 +88,6 @@ def check_resources_availability(drink_to_check):
     # latte check
     if drink_to_check == '2':
         print ("Checking latte resources.")
-        print (MENU['latte'])
         if int(resources['water']) < int(MENU['latte']['ingredients']['water']):
             print("Sorry there is not enough water.")
             return 0
@@ -104,7 +103,6 @@ def check_resources_availability(drink_to_check):
     # Cappuccino check
     if drink_to_check == '3':
         print("Checking cappuccino resources.")
-        print (MENU['espresso'])
         if int(resources['water']) < int(MENU['cappuccino']['ingredients']['water']):
             print("Sorry there is not enough water.")
             return 0
@@ -116,23 +114,29 @@ def check_resources_availability(drink_to_check):
             return 0
         else:
             return 1
-    # a. When the user chooses a drink, the program should check if there are enough
-    # resources to make that drink.
-    # b. E.g. if Latte requires 200ml water but there is only 100ml left in the machine. It should
-    # not continue to make the drink but print: “Sorry there is not enough water.”
-    # c. The same should happen if another resource is depleted, e.g. milk or coffee.
-
     return
 
 
 # 5. Process coins.
 # a. If there are sufficient resources to make the drink selected, then the program should
 # prompt the user to insert coins.
-# b. Remember that quarters = $0.25, dimes = $0.10, nickles = $0.05, pennies = $0.01
 # c. Calculate the monetary value of the coins inserted. E.g. 1 quarter, 2 dimes, 1 nickel, 2
 # pennies = 0.25 + 0.1 x 2 + 0.05 + 0.01 x 2 = $0.52
 
-def process_coins():
+def process_coins(drink_selection):
+    drink_name =list(MENU)[int(drink_selection)-1]
+    print ("PROCESSING COINS CALLED")
+    print(f"Please insert coins to pay for your {drink_name}")
+    inserted_quarters = 0
+    inserted_dimes = 0
+    inserted_nickles = 0
+    inserted_pennies = 0
+
+    quarters = .25
+    dimes = .10
+    nickles = .05
+    pennies = .01
+
     return
 
 
@@ -184,4 +188,5 @@ while turn_off_machine != True:
     resource_check = check_resources_availability(drink_choice)
     if resource_check == 0:
         continue
+    process_coins(drink_choice)
     turn_off()
