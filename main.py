@@ -25,7 +25,7 @@ MENU = {
 }
 
 resources = {
-    "water": 300,
+    "water": 500,
     "milk": 200,
     "coffee": 100,
     "money": 100
@@ -33,9 +33,7 @@ resources = {
 
 
 # 1. Prompt user by asking “What would you like? (espresso/latte/cappuccino):”
-# a. Check the user’s input to decide what to do next.
-# b. The prompt should show every time action has completed, e.g. once the drink is
-# dispensed. The prompt should show again to serve the next customer.
+
 
 def order_drink():
     selection = input("What would you like?\n1 - Espresso\n2 - Latte\n3 - Cappuccino)"
@@ -48,11 +46,12 @@ def order_drink():
     if selection == 'off':
         turn_off()
     # Print report.
-    if selection == 'report':
+    elif selection == 'report':
         print_report()
     elif selection != '1' and selection != '2' and selection != '3':
         print("\n\nWrong selection, try again\n\n")
     else:
+
         return selection
 
 
@@ -64,27 +63,65 @@ def turn_off():
 
 
 def print_report():
-    # a. When the user enters “report” to the prompt, a report should be generated that shows
-    # the current resource values. e.g.
-    # Water: 100ml
-    # Milk: 50ml
-    # Coffee: 76g
-    # Money: $2.5
-    print(f"\n\nReport on resource levels:\nWater: {resources['water']}m;\n"
+    print(f"\n\nReport on resource levels:\n"
+          f"Water: {resources['water']}m\n"
           f"Milk: {resources['milk']}ml\n"
           f"Coffee: {resources['coffee']}g\n"
           f"Money: ${resources['money']}\n\n")
     return
 
+def check_resources_availability(drink_to_check):
+    print ("selected: " + drink_to_check)
+    # espresso check
+    if drink_to_check == '1':
+        print("Checking espresso resources.")
+        print (MENU['espresso'])
+        if int(resources['water']) < int(MENU['espresso']['ingredients']['water']):
+            print("Sorry there is not enough water.")
+            return 0
+        elif int(resources['coffee']) < int(MENU['espresso']['ingredients']['coffee']):
+            print("Sorry there is not enough coffee beans.")
+            return 0
+        else:
+            return 1
 
-# 4. Check resources sufficient?
-# a. When the user chooses a drink, the program should check if there are enough
-# resources to make that drink.
-# b. E.g. if Latte requires 200ml water but there is only 100ml left in the machine. It should
-# not continue to make the drink but print: “Sorry there is not enough water.”
-# c. The same should happen if another resource is depleted, e.g. milk or coffee.
+    # latte check
+    if drink_to_check == '2':
+        print ("Checking latte resources.")
+        print (MENU['latte'])
+        if int(resources['water']) < int(MENU['latte']['ingredients']['water']):
+            print("Sorry there is not enough water.")
+            return 0
+        elif int(resources['milk']) < int(MENU['latte']['ingredients']['milk']):
+            print("Sorry there is not enough milk.")
+            return 0
+        elif int(resources['coffee']) < int(MENU['latte']['ingredients']['coffee']):
+            print("Sorry there is not enough coffee beans.")
+            return 0
+        else:
+            return 1
 
-def check_resources_availability():
+    # Cappuccino check
+    if drink_to_check == '3':
+        print("Checking cappuccino resources.")
+        print (MENU['espresso'])
+        if int(resources['water']) < int(MENU['cappuccino']['ingredients']['water']):
+            print("Sorry there is not enough water.")
+            return 0
+        elif int(resources['milk']) < int(MENU['cappuccino']['ingredients']['milk']):
+            print("Sorry there is not enough milk.")
+            return 0
+        elif int(resources['coffee']) < int(MENU['cappuccino']['ingredients']['coffee']):
+            print("Sorry there is not enough coffee beans.")
+            return 0
+        else:
+            return 1
+    # a. When the user chooses a drink, the program should check if there are enough
+    # resources to make that drink.
+    # b. E.g. if Latte requires 200ml water but there is only 100ml left in the machine. It should
+    # not continue to make the drink but print: “Sorry there is not enough water.”
+    # c. The same should happen if another resource is depleted, e.g. milk or coffee.
+
     return
 
 
@@ -134,10 +171,17 @@ def check_transaction_successful():
 # b. Once all resources have been deducted, tell the user “Here is your latte. Enjoy!”. If
 # latte was their choice of drink.
 
-def make_coffee():
+def make_coffee(drink_to_be_made):
+
     return
 
 
 turn_off_machine = False
 while turn_off_machine != True:
-    order_drink()
+    drink_choice = order_drink()
+    make_coffee(drink_choice)
+    # Check resources sufficient?
+    resource_check = check_resources_availability(drink_choice)
+    if resource_check == 0:
+        continue
+    turn_off()
