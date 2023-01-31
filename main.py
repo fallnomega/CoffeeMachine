@@ -1,28 +1,81 @@
+MENU = {
+    "espresso": {
+        "ingredients": {
+            "water": 50,
+            "coffee": 18,
+        },
+        "cost": 1.5,
+    },
+    "latte": {
+        "ingredients": {
+            "water": 200,
+            "milk": 150,
+            "coffee": 24,
+        },
+        "cost": 2.5,
+    },
+    "cappuccino": {
+        "ingredients": {
+            "water": 250,
+            "milk": 100,
+            "coffee": 24,
+        },
+        "cost": 3.0,
+    }
+}
+
+resources = {
+    "water": 300,
+    "milk": 200,
+    "coffee": 100,
+    "money": 100
+}
+
+
 # 1. Prompt user by asking “What would you like? (espresso/latte/cappuccino):”
 # a. Check the user’s input to decide what to do next.
 # b. The prompt should show every time action has completed, e.g. once the drink is
 # dispensed. The prompt should show again to serve the next customer.
 
 def order_drink():
-    return
+    selection = input("What would you like?\n1 - Espresso\n2 - Latte\n3 - Cappuccino)"
+                      "\nUse 1, 2, or 3 for the selection: ")
+    # print(("What would you like?\n1 - Espresso\n2 - Latte\n3 - Cappuccino)"
+    #                   "\nUse 1, 2, or 3 for the selection: "))
+    # selection = 0
 
-# 2. Turn off the Coffee Machine by entering “off” to the prompt.
-# a. For maintainers of the coffee machine, they can use “off” as the secret word to turn off
-# the machine. Your code should end execution when this happens.
+    # Turn off the Coffee Machine by entering “off” to the prompt.
+    if selection == 'off':
+        turn_off()
+    # Print report.
+    if selection == 'report':
+        print_report()
+    elif selection != '1' and selection != '2' and selection != '3':
+        print("\n\nWrong selection, try again\n\n")
+    else:
+        return selection
+
+
 
 def turn_off():
+    print("\n\nTurning off the machine. Good bye!\n\n")
+    exit()
     return
 
-# 3. Print report.
-# a. When the user enters “report” to the prompt, a report should be generated that shows
-# the current resource values. e.g.
-# Water: 100ml
-# Milk: 50ml
-# Coffee: 76g
-# Money: $2.5
 
 def print_report():
+    # a. When the user enters “report” to the prompt, a report should be generated that shows
+    # the current resource values. e.g.
+    # Water: 100ml
+    # Milk: 50ml
+    # Coffee: 76g
+    # Money: $2.5
+    print(f"\n\nReport on resource levels:\nWater: {resources['water']}m;\n"
+          f"Milk: {resources['milk']}ml\n"
+          f"Coffee: {resources['coffee']}g\n"
+          f"Money: ${resources['money']}\n\n")
     return
+
 
 # 4. Check resources sufficient?
 # a. When the user chooses a drink, the program should check if there are enough
@@ -34,6 +87,7 @@ def print_report():
 def check_resources_availability():
     return
 
+
 # 5. Process coins.
 # a. If there are sufficient resources to make the drink selected, then the program should
 # prompt the user to insert coins.
@@ -43,6 +97,7 @@ def check_resources_availability():
 
 def process_coins():
     return
+
 
 # 6. Check transaction successful?
 # a. Check that the user has inserted enough money to purchase the drink they selected.
@@ -60,6 +115,7 @@ def process_coins():
 
 def check_transaction_successful():
     return
+
 
 # 7. Make Coffee.
 # a. If the transaction is successful and there are enough resources to make the drink the
@@ -80,3 +136,8 @@ def check_transaction_successful():
 
 def make_coffee():
     return
+
+
+turn_off_machine = False
+while turn_off_machine != True:
+    order_drink()
