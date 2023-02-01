@@ -40,22 +40,18 @@ PENNIES = .01
 def order_drink():
     selection = input("What would you like?\n1 - Espresso\n2 - Latte\n3 - Cappuccino)"
                       "\nUse 1, 2, or 3 for the selection: ")
-    # print(("What would you like?\n1 - Espresso\n2 - Latte\n3 - Cappuccino)"
-    #                   "\nUse 1, 2, or 3 for the selection: "))
-    # selection = 0
-
     # Turn off the Coffee Machine by entering “off” to the prompt.
     if selection == 'off':
         turn_off()
     # Print report.
     elif selection == 'report':
         print_report()
-    elif selection != '1' and selection != '2' and selection != '3':
+    elif int(selection) > 3:
         print("\n\nWrong selection, try again\n\n")
+        exit()
     else:
 
         return selection
-
 
 
 def turn_off():
@@ -69,8 +65,10 @@ def print_report():
           f"Water: {resources['water']}m\n"
           f"Milk: {resources['milk']}ml\n"
           f"Coffee: {resources['coffee']}g\n"
-          f"Money: ${resources['money']}\n\n")
+          f"Money: ${resources['money']}\n"
+          f"Profit: ${resources['money'] - 100}\n\n")
     return
+
 
 def check_resources_availability(drink_to_check):
     # espresso check
@@ -87,7 +85,7 @@ def check_resources_availability(drink_to_check):
 
     # latte check
     if drink_to_check == '2':
-        print ("Checking latte resources.")
+        print("Checking latte resources.")
         if int(resources['water']) < int(MENU['latte']['ingredients']['water']):
             print("Sorry there is not enough water.")
             return 0
@@ -117,76 +115,71 @@ def check_resources_availability(drink_to_check):
     return
 
 
-# 5. Process coins.
-# a. If there are sufficient resources to make the drink selected, then the program should
-# prompt the user to insert coins.
-# c. Calculate the monetary value of the coins inserted. E.g. 1 quarter, 2 dimes, 1 nickel, 2
-# pennies = 0.25 + 0.1 x 2 + 0.05 + 0.01 x 2 = $0.52
-
+# Process coins.
 def process_coins(drink_selection):
-    drink_name =list(MENU)[int(drink_selection)-1]
-    print ("PROCESSING COINS CALLED")
-    print(f"Please insert coins to pay for your {drink_name}")
-    inserted_quarters = 0
-    inserted_dimes = 0
-    inserted_nickles = 0
-    inserted_pennies = 0
+    drink_name = list(MENU)[int(drink_selection) - 1]
+    print(f"Please insert coins to pay for your {drink_name}.\n"
+          f"The total cost is: ${MENU[drink_name]['cost']} ")
 
-    quarters = .25
-    dimes = .10
-    nickles = .05
-    pennies = .01
+    inserted_quarters = int(input("How many quarters to insert?") or 0)
+    inserted_dimes = int(input("How many dimes to insert?") or 0)
+    inserted_nickles = int(input("How many nickles to insert?") or 0)
+    inserted_pennies = int(input("How many pennies to insert?") or 0)
+    total_inserted = round((inserted_quarters * QUARTERS) + (inserted_dimes * DIMES) + (inserted_nickles * NICKLES) + (
+            inserted_pennies * PENNIES), 2)
+    print(f"Total inserted is: ${round(total_inserted, 2)}")
+    # Check transaction successful?
+    if check_transaction_successful(total_inserted, drink_name) is False:
+        print("Sorry that's not enough money. Money refunded.")
+        exit()
+    else:
+        if float(MENU[drink_name]['cost']) < total_inserted:
+            print(f"{total_inserted} - {float(MENU[drink_name]['cost'])}")
+            change = total_inserted - float(MENU[drink_name]['cost'])
+            resources['money'] += MENU[drink_name]['cost']
+            print(f"Here is ${change} dollars in change")
 
+        else:
+            resources['money'] += MENU[drink_name]['cost']
     return
 
 
-# 6. Check transaction successful?
-# a. Check that the user has inserted enough money to purchase the drink they selected.
-# E.g Latte cost $2.50, but they only inserted $0.52 then after counting the coins the
-# program should say “Sorry that's not enough money. Money refunded.”.
-# b. But if the user has inserted enough money, then the cost of the drink gets added to the
-# machine as the profit and this will be reflected the next time “report” is triggered. E.g.
-# Water: 100ml
-# Milk: 50ml
-# Coffee: 76g
-# Money: $2.5
-# c. If the user has inserted too much money, the machine should offer change.
-# E.g. “Here is $2.45 dollars in change.” The change should be rounded to 2 decimal
-# places.
-
-def check_transaction_successful():
-    return
+def check_transaction_successful(inserted_money, drink_name):
+    if int(MENU[drink_name]['cost']) > inserted_money:
+        return False
+    else:
+        return True
 
 
-# 7. Make Coffee.
-# a. If the transaction is successful and there are enough resources to make the drink the
-# user selected, then the ingredients to make the drink should be deducted from the
-# coffee machine resources.
-# E.g. report before purchasing latte:
-# Water: 300ml
-# Milk: 200ml
-# Coffee: 100g
-# Money: $0
-# Report after purchasing latte:
-# Water: 100ml
-# Milk: 50ml
-# Coffee: 76g
-# Money: $2.5
-# b. Once all resources have been deducted, tell the user “Here is your latte. Enjoy!”. If
-# latte was their choice of drink.
-
+# Make Coffee.
 def make_coffee(drink_to_be_made):
-
+    if int(drink_to_be_made) == 1:
+        resources['water'] -= MENU['espresso']['ingredients']['water']
+        resources['coffee'] -= MENU['espresso']['ingredients']['coffee']
+        return
+    if int(drink_to_be_made) == 2:
+        resources['water'] -= MENU['latte']['ingredients']['water']
+        resources['coffee'] -= MENU['latte']['ingredients']['coffee']
+        resources['milk'] -= MENU['latte']['ingredients']['milk']
+        return
+    else:
+        resources['water'] -= MENU['cappuccino']['ingredients']['water']
+        resources['coffee'] -= MENU['cappuccino']['ingredients']['coffee']
+        resources['milk'] -= MENU['cappuccino']['ingredients']['milk']
+        return
     return
 
 
 turn_off_machine = False
 while turn_off_machine != True:
     drink_choice = order_drink()
-    make_coffee(drink_choice)
+    print_report()
     # Check resources sufficient?
     resource_check = check_resources_availability(drink_choice)
     if resource_check == 0:
         continue
     process_coins(drink_choice)
+    make_coffee(drink_choice)
+    print_report()
+    print(f"Here is your {list(MENU)[int(drink_choice) - 1]}. Enjoy!")
     turn_off()
